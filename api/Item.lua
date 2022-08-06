@@ -125,7 +125,11 @@ function ItemSlot:SellButtonEnter()
 	self:AnchorTooltip();
 	GameTooltip:ClearLines();
 	local item = self._internalItem
-	GameTooltip:SetHyperlink(item.link)
+	if item.bag and item.slot then 
+		GameTooltip:SetBagItem(item.bag, item.slot)
+	else
+		GameTooltip:SetHyperlink(item.link)
+	end
 	GameTooltip:Show();
 end
 	

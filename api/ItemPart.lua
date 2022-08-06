@@ -141,7 +141,9 @@ function ItemPart:PlaceSellButton(btn)
 	btn.Frame:ClearAllPoints();
 	
 	local function PlaceRight()
-		btn.Frame:SetPoint("LEFT", self:GetLastItem(item).Frame, "RIGHT", 5, 0);
+		if self:GetLastItem(item) then
+			btn.Frame:SetPoint("LEFT", self:GetLastItem(item).Frame, "RIGHT", 5, 0);
+		end
 	end
 
 	local function PlaceBottom()
