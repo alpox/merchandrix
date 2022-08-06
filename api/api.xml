@@ -1,0 +1,8 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
+	<Script file="Utils.lua" />
+	<Script file="BagEvents.lua" />
+	<Script file="Vendor.lua" />
+	<Script file="Item.lua" />
+	<Script file="ItemPart.lua" />
+	<Script file="ItemFrame.lua" />
+</Ui>

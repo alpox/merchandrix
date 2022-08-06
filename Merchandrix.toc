@@ -1,0 +1,11 @@
+## Interface: 90205
+## Title: Merchandrix
+## Notes: "Adds better vendor overview"
+## Version: 1.0
+## SavedVariables: MerchandrixConfig
+## SavedVariablesPerCharacter: EnabledItems, EnabledParts
+
+Merchandrix.xml
+localization\localization.xml
+config\config.xml
+api\api.xml
