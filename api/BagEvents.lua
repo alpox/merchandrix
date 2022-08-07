@@ -110,7 +110,8 @@ function GetItemObject(itemId, bag, slot, itemCount)
 		slot = slot,
 		quality = quality,
 		level = level,
-		equipLoc = equipLoc
+		equipLoc = equipLoc,
+		location = ItemLocation:CreateFromBagAndSlot(bag, slot),
 	}
 end
 
