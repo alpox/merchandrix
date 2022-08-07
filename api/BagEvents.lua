@@ -130,7 +130,7 @@ function DetectItems()
 				local itemType = itemObject.itemType
 				local classId = itemObject.classId
 				
-				if price > 0 then
+				if price and price > 0 then
 					local id = C_Item.GetItemGUID(ItemLocation:CreateFromBagAndSlot(bag, slot))
 
 					local itemPart = {
