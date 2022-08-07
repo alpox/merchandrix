@@ -18,7 +18,6 @@ function ItemPart:New(classId, title)
 	self.Frame = CreateFrame("Frame", name, Addon.ItemFrame, BackdropTemplateMixin and "BackdropTemplate");
 	
 	self.Frame:RegisterEvent("ADDON_LOADED");
-	Addon.EventHandler:RegisterEvent(self, "ITEMS_CHANGE");
 	
 	self.Frame:SetScript("OnEvent", function(f, event, ...)
 		if self[event] then
@@ -51,7 +50,7 @@ function ItemPart:ADDON_LOADED(event, ad)
 	end
 end
 
-function ItemPart:ITEMS_CHANGE()
+function ItemPart:UpdateItems()
 	self:Clear();
 	local sortFunc = nil;
 	

@@ -33,14 +33,16 @@ end
 
 function itemFrame:OrganizeParts()
 	local prev = nil
-	for key, part in pairs(self.itemParts) do
+	for _, part in pairs(self.itemParts) do
+		part.Frame:ClearAllPoints()
+		
+		if not prev then
+			part.Frame:SetPoint("TOPLEFT", Addon.Vendor, "TOPLEFT", 10, -10)
+		else
+			part.Frame:SetPoint("TOP", prev.Frame , "BOTTOM", 0, -5)
+		end
+
 		if part:NumShownItems() > 0 then
-			part.Frame:ClearAllPoints();
-			if not prev then
-				part.Frame:SetPoint("TOPLEFT", Addon.Vendor, "TOPLEFT", 10, -10);
-			else
-				part.Frame:SetPoint("TOP", prev.Frame , "BOTTOM", 0, -5);
-			end
 			prev = part
 		end
 	end
@@ -52,6 +54,10 @@ function itemFrame:UpdateParts()
 			self.itemParts[key] = Addon.ItemPart:New(key, value.typeName)
 		end
 	end
+	for _, part in pairs(self.itemParts) do
+		part:UpdateItems()
+	end
+
 	self:UpdateSize();
 end
 
@@ -75,11 +81,10 @@ end
 function itemFrame:UpdateSize()
 	local height = 0;
 	local width = 0;
-	
+
 	self:OrganizeParts();
 	
 	for _, part in pairs(self.itemParts) do
-		part:UpdateSize()
 		local w, h = part.Frame:GetSize();
 		
 		if w > width then
@@ -93,6 +98,7 @@ function itemFrame:UpdateSize()
 	width = width + 20;
 	
 	self:SetSize(width, height);
+
 	Addon.Vendor:UpdateSize();
 end
 
