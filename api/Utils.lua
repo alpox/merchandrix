@@ -158,6 +158,18 @@ function itemSubTypeSort(t)
    return sortItemInfo(t, 13)
 end
 
+function stackCountSort(t)
+   return sortItemInfoByFn(t, function(item)
+      return C_Item.GetStackCount(item.location)
+   end)
+end
+
+function stackCountSortDesc(t)
+   return sortItemInfoByFn(t, function(item)
+      return C_Item.GetStackCount(item.location)
+   end, true)
+end
+
 function itemSubTypeSortDesc(t)
    return sortItemInfo(t, 13, true)
 end
@@ -188,7 +200,7 @@ function sortedArmor(t)
 end
 
 function sortedOther(t)
-	local ts = itemSubTypeSortDesc(levelSortDesc(itemNameSort(t)));
+	local ts = itemSubTypeSortDesc(stackCountSortDesc(levelSortDesc(itemNameSort(t))));
 
    local function s(ts, i)
       i = i + 1;
