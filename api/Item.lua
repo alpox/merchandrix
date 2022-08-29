@@ -35,7 +35,7 @@ function ItemSlot:New(item, part)
 end
 
 function ItemSlot:UseConfig()
-	local size = MerchandrixConfig.general.buttonSize
+	local size = VendorixConfig.general.buttonSize
 	
 	self.Button:SetSize(size, size)
 	self.Button.IconBorder:SetSize(size, size)

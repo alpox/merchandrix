@@ -18,6 +18,28 @@ Addon.SellItem = function(item)
 	end
 end
 
+Addon.SellItems = function(items)
+	local itemsPerChunk = 5
+
+	local numItemsToSell = min(#items, itemsPerChunk)
+
+	local nextItems = {}
+
+	for i, item in ipairs(items) do
+		if i <= numItemsToSell then
+			Addon.SellItem(item)
+		else
+			table.insert(nextItems, item)
+		end
+	end
+
+	if #nextItems > 0 then
+		Vendorix_wait(0.5, function(itms)
+			Addon.SellItems(itms)
+		end, nextItems)
+	end
+end
+
 function Addon:EvaluateEquip(item)
 	if not Addon:IsArmor(item) and not Addon:IsWeapon(item) then return true end
 	return true

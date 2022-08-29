@@ -21,6 +21,9 @@ end
 
 function vendor:UpdateSize()
 	local width, height = Addon.ItemFrame:GetSize();
+	if width < 100 then
+		width = 100
+	end
 	height = height + 60;
 	vendor:SetSize(width, height);
 end
@@ -83,13 +86,17 @@ function vendor:GetGreyButtonTooltipText()
 end
 
 local function SellAllButtonClick()
+	local itemsToSell = {}
+
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
 			if Addon.CanSellItem(item) then
-				Addon.SellItem(item);
+				table.insert(itemsToSell, item)
 			end
 		end
 	end
+
+	Addon.SellItems(itemsToSell)
 end
 
 function vendor:CreateSellAllButton()

@@ -1,3 +1,3 @@
 <Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/">
-	<Script file="Merchandrix_Core.lua" />
+	<Script file="Vendorix_Core.lua" />
 </Ui>

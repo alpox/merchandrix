@@ -113,10 +113,10 @@ function ItemPart:UpdateSize()
 		return
 	end
 
-	local buttonSize = MerchandrixConfig.general.buttonSize;
+	local buttonSize = VendorixConfig.general.buttonSize;
 	local itemSize = self.Items[1].Frame:GetHeight()
-	local newHeight = math.ceil(numItems / MerchandrixConfig.general.numColumns) * (itemSize + 5) + TITLE_HEIGHT + 30;
-	local width = (buttonSize + 5) * MerchandrixConfig.general.numColumns + 15;
+	local newHeight = math.ceil(numItems / VendorixConfig.general.numColumns) * (itemSize + 5) + TITLE_HEIGHT + 30;
+	local width = (buttonSize + 5) * VendorixConfig.general.numColumns + 15;
 	
 	self.Frame:Show();
 	
@@ -154,7 +154,7 @@ function ItemPart:PlaceSellButton(btn)
 		end
 	end
 	
-	if (itemNum - 1) % MerchandrixConfig.general.numColumns == 0 then
+	if (itemNum - 1) % VendorixConfig.general.numColumns == 0 then
 		PlaceBottom()
 	else
 		PlaceRight()
@@ -223,7 +223,7 @@ end
 function ItemPart:GetTopItem(item)
 	local idx = self:GetIndexOfItem(item);
 	if not idx then return nil end
-	idx = idx - MerchandrixConfig.general.numColumns;
+	idx = idx - VendorixConfig.general.numColumns;
 	return self.Items[idx];
 end
 
@@ -246,7 +246,7 @@ end
 
 function ItemPart:GetColumnNums()
 	local idx = {};
-	for i = 1, MerchandrixConfig.general.numColumns do
+	for i = 1, VendorixConfig.general.numColumns do
 		idx[i] = i;
 	end
 	return unpack(idx);

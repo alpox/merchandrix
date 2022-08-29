@@ -7,7 +7,7 @@ local defaultConfig = {
 	}
 }
 
-MerchandrixConfig = MerchandrixConfig or defaultConfig
+VendorixConfig = VendorixConfig or defaultConfig
 
 local ConfigFrame = CreateFrame("Frame", ADDON .. "ConfigFrame", InterfaceOptionsFramePanelContainer)
 ConfigFrame:Hide()
@@ -18,7 +18,7 @@ local function UseConfig()
 end
 
 local function UseDefaults()
-	MerchandrixConfig = defaultConfig
+	VendorixConfig = defaultConfig
 	UseConfig()
 end
 
@@ -30,8 +30,8 @@ ConfigFrame:SetScript("OnShow", function(self)
 	local Refresh;
     function Refresh()
         if not self:IsVisible() then return end
-        columnSlider:SetSavedValue(MerchandrixConfig.general.numColumns)
-		itemSlider:SetSavedValue(MerchandrixConfig.general.buttonSize)
+        columnSlider:SetSavedValue(VendorixConfig.general.numColumns)
+		itemSlider:SetSavedValue(VendorixConfig.general.buttonSize)
     end
 
     self:SetScript("OnShow", Refresh) 
@@ -49,13 +49,13 @@ function ConfigFrame:CreateColumnSlider(anchor)
 	local slider = Addon.OptionsSlider:New(Addon.L["Spalten"], self, 5, 20, 1)
 	
 	slider.SetSavedValue = function(self, value)
-		MerchandrixConfig.general.numColumns = value
+		VendorixConfig.general.numColumns = value
 		self:UpdateValue()
 		UseConfig()
 	end
 
 	slider.GetSavedValue = function(self)
-		return MerchandrixConfig.general.numColumns
+		return VendorixConfig.general.numColumns
 	end
 
 	slider.GetFormattedText = function(self, value)
@@ -72,13 +72,13 @@ function ConfigFrame:CreateButtonWidthSlider(anchor)
 	local slider = Addon.OptionsSlider:New(Addon.L["Itemgrösse"], self, 25, 50, 1)
 
 	slider.SetSavedValue = function(self, value)
-		MerchandrixConfig.general.buttonSize = value
+		VendorixConfig.general.buttonSize = value
 		self:UpdateValue()
 		UseConfig()
 	end
 
 	slider.GetSavedValue = function(self)
-		return MerchandrixConfig.general.buttonSize
+		return VendorixConfig.general.buttonSize
 	end
 
 	slider.GetFormattedText = function(self, value)
