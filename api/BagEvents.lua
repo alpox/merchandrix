@@ -57,15 +57,15 @@ end
 function Addon:TooltipInformationAvailable(bag, slot, ...)
    local hasMap = {};
    
-   GameTooltip:ClearLines();
-   GameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
-   GameTooltip:SetBagItem(bag, slot);
+   C_TooltipInfo.GameTooltip:ClearLines();
+   C_TooltipInfo.GameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
+   C_TooltipInfo.GameTooltip:SetBagItem(bag, slot);
    
    for p, tag in ipairs({...}) do
 		hasMap[p] = false
    end
    
-   for _, region in ipairs({GameTooltip:GetRegions()}) do
+   for _, region in ipairs({C_TooltipInfo.GameTooltip:GetRegions()}) do
       if region and region:GetObjectType() == "FontString" then
          local text = region:GetText()
 		 
@@ -77,7 +77,7 @@ function Addon:TooltipInformationAvailable(bag, slot, ...)
       end
    end
    
-   GameTooltip:Hide();
+   C_TooltipInfo.GameTooltip:Hide();
    return unpack(hasMap);
 end
 
@@ -121,11 +121,11 @@ function DetectItems()
   for bag = 0, 4 do
 		
 		
-    for slot = 1, GetContainerNumSlots(bag) do
-      local itemId = GetContainerItemID(bag, slot)
+    for slot = 1, C_Container.GetContainerNumSlots(bag) do
+      local itemId = C_Container.GetContainerItemID(bag, slot)
 			if itemId ~= nil then
-				local _, itemCount = GetContainerItemInfo(bag, slot)
-				local itemObject = GetItemObject(itemId, bag, slot, itemCount)
+				local containerInfo = C_Container.GetContainerItemInfo(bag, slot)
+				local itemObject = GetItemObject(itemId, bag, slot, containerInfo.stackCount)
 				
 				local price = itemObject.price
 				local itemType = itemObject.itemType

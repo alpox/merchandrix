@@ -31,13 +31,17 @@ end
 --[[ sell grey button ]]--
 
 local function SellGreyButtonClick()
+	local itemsToSell = {}
+
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
 			if item.quality == 0 and Addon.CanSellItem(item) then
-				Addon.SellItem(item);
+				table.insert(itemsToSell, item)
 			end
 		end
 	end
+
+	Addon.SellItems(itemsToSell)
 end
 
 function vendor:CreateSellGreyButton()
