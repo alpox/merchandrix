@@ -17,6 +17,8 @@ if GetLocale() ~= "deDE" then
 	Addon.L["Konfiguration"] = "Configuration";
 	Addon.L["Spalten"] = "Columns";
 	Addon.L["Itemgrösse"] = "Itemsize";
+	Addon.L["ShowBoE"] = "Show BoE and BoU";
 	Addon.L["Konfiguriere_Spalten"] = "Configurate here the number of columns of your categories.";
 	Addon.L["Konfiguriere_Grössen"] = "Configurate here the size of the item-buttons.";
+	Addon.L["Konfiguriere_ShowBoE"] = "Configurate here if you want to see the label 'BoE' for bind on equip or 'BoU' for bind on use.";
 end

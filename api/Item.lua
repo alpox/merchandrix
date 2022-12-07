@@ -9,6 +9,19 @@ Addon.ItemSlot = ItemSlot
 local RIGHT_BUTTON_UP = "RightButtonUp"
 local LEFT_BUTTON_UP = "LeftButtonUp"
 
+-- https://github.com/GoldpawsStuff/Bagnon_BoE/blob/master/Bagnon_BoE/main.lua 
+local colors = {
+	[0] = { 157/255, 157/255, 157/255 }, -- Poor
+	[1] = { 240/255, 240/255, 240/255 }, -- Common
+	[2] = { 30/255, 178/255, 0/255 }, -- Uncommon
+	[3] = { 0/255, 112/255, 221/255 }, -- Rare
+	[4] = { 163/255, 53/255, 238/255 }, -- Epic
+	[5] = { 225/255, 96/255, 0/255 }, -- Legendary
+	[6] = { 229/255, 204/255, 127/255 }, -- Artifact
+	[7] = { 79/255, 196/255, 225/255 }, -- Heirloom
+	[8] = { 79/255, 196/255, 225/255 } -- Blizzard
+}
+
 function ItemSlot:New(item, part)
 	self = setmetatable({}, ItemSlot)
 	
@@ -18,6 +31,8 @@ function ItemSlot:New(item, part)
 	self.part = part;
 	
 	self:Set(item);
+
+	self:CreateBoE()
 	
 	self:UseConfig();
 	
@@ -34,6 +49,43 @@ function ItemSlot:New(item, part)
 	return self;
 end
 
+function ItemSlot:CreateBoE()
+	local isBound = self._internalItem.isBound
+
+	if (isBound) then
+		return
+	end
+
+	local quality = self._internalItem.quality
+	local color = quality and colors[quality]
+	local mult = (quality ~= 3 and quality ~= 4) and .7
+	local bind = self._internalItem.bindType == LE_ITEM_BIND_ON_EQUIP or self._internalItem.bindType == LE_ITEM_BIND_ON_USE
+	local message = bind == LE_ITEM_BIND_ON_USE and "BoU" or "BoE"
+	
+	if (not bind) then
+		return
+	end
+
+	self.BoeFont = self.Button:CreateFontString()
+	self.BoeFont:SetDrawLayer("OVERLAY", 2)
+	self.BoeFont:SetPoint("BOTTOMLEFT", 2, 2)
+	self.BoeFont:SetFontObject(NumberFont_Outline_Med or NumberFontNormal)
+	self.BoeFont:SetFont(self.BoeFont:GetFont(), 12, "OUTLINE")
+	self.BoeFont:SetShadowOffset(1, -1)
+	self.BoeFont:SetShadowColor(0, 0, 0, .5)
+	self.BoeFont:SetText(message)
+
+	if (color) then
+		if (mult) then
+			self.BoeFont:SetTextColor(color[1] * mult, color[2] * mult, color[3] * mult)
+		else
+			self.BoeFont:SetTextColor(color[1], color[2], color[3])
+		end
+	else
+		self.BoeFont:SetTextColor(.94, .94, .94)
+	end	
+end
+
 function ItemSlot:UseConfig()
 	local size = VendorixConfig.general.buttonSize
 	
@@ -41,6 +93,14 @@ function ItemSlot:UseConfig()
 	self.Button.IconBorder:SetSize(size, size)
 	self.Frame:SetSize(size, size)
 	Addon:StyleButton(self.Button, nil, size)
+
+	if (self.BoeFont ~= nil) then
+		if (VendorixConfig.general.showBoE) then
+			self.BoeFont:Show()
+		else
+			self.BoeFont:Hide()
+		end
+	end
 end
 
 function ItemSlot:MODIFIER_STATE_CHANGED(event, button, state)

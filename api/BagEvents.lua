@@ -92,8 +92,8 @@ end
 
 f:Load();
 
-function GetItemObject(itemId, bag, slot, itemCount)
-	local itemLink, quality, level, _, itemType, _, stackCount, equipLoc, _, price, classId, subClassId = select(2, GetItemInfo(itemId))
+function GetItemObject(itemId, bag, slot, containerInfo)
+	local itemLink, quality, level, _, itemType, _, stackCount, equipLoc, _, price, classId, subClassId, bindType = select(2, GetItemInfo(itemId))
 	local id = C_Item.GetItemGUID(ItemLocation:CreateFromBagAndSlot(bag, slot))
 	
 	return {
@@ -104,13 +104,15 @@ function GetItemObject(itemId, bag, slot, itemCount)
 		itemType = itemType,
 		price = price,
 		link = itemLink,
-		count = itemCount,
+		count = containerInfo.stackCount,
 		stackCount = stackCount,
 		bag = bag,
 		slot = slot,
 		quality = quality,
 		level = level,
 		equipLoc = equipLoc,
+		bindType = bindType,
+		isBound = containerInfo.isBound,
 		location = ItemLocation:CreateFromBagAndSlot(bag, slot),
 	}
 end
@@ -125,7 +127,7 @@ function DetectItems()
       local itemId = C_Container.GetContainerItemID(bag, slot)
 			if itemId ~= nil then
 				local containerInfo = C_Container.GetContainerItemInfo(bag, slot)
-				local itemObject = GetItemObject(itemId, bag, slot, containerInfo.stackCount)
+				local itemObject = GetItemObject(itemId, bag, slot, containerInfo)
 				
 				local price = itemObject.price
 				local itemType = itemObject.itemType

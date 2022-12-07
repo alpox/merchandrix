@@ -3,15 +3,14 @@ local ADDON, Addon = ...;
 local defaultConfig = {
 	general = {
 		numColumns = 10,
-		buttonSize = 36
+		buttonSize = 36,
+		showBoE = false
 	}
 }
 
 VendorixConfig = VendorixConfig or defaultConfig
 
-local ConfigFrame = CreateFrame("Frame", ADDON .. "ConfigFrame", InterfaceOptionsFramePanelContainer)
-ConfigFrame:Hide()
-ConfigFrame.name = ADDON
+local category = Settings.RegisterVerticalLayoutCategory("Vendorix")
 
 local function UseConfig()
 	Addon.ItemFrame:UseConfig()
@@ -22,73 +21,52 @@ local function UseDefaults()
 	UseConfig()
 end
 
-ConfigFrame:SetScript("OnShow", function(self)
-	local title = self:CreateTitle()
-	local columnSlider = self:CreateColumnSlider(title)
-	local itemSlider = self:CreateButtonWidthSlider(columnSlider)
-	
-	local Refresh;
-    function Refresh()
-        if not self:IsVisible() then return end
-        columnSlider:SetSavedValue(VendorixConfig.general.numColumns)
-		itemSlider:SetSavedValue(VendorixConfig.general.buttonSize)
-    end
-
-    self:SetScript("OnShow", Refresh) 
-    Refresh()
-end)
-
-function ConfigFrame:CreateTitle()
-	local title = self:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-    title:SetPoint("TOPLEFT", 16, -16)
-    title:SetText(ADDON .. " " .. Addon.L["Konfiguration"])
-	return title
-end
-
-function ConfigFrame:CreateColumnSlider(anchor)
-	local slider = Addon.OptionsSlider:New(Addon.L["Spalten"], self, 5, 20, 1)
-	
-	slider.SetSavedValue = function(self, value)
-		VendorixConfig.general.numColumns = value
-		self:UpdateValue()
+function SetValue(key, setting)
+	return function (event)
+		VendorixConfig.general[key] = setting:GetValue()
 		UseConfig()
 	end
-
-	slider.GetSavedValue = function(self)
-		return VendorixConfig.general.numColumns
-	end
-
-	slider.GetFormattedText = function(self, value)
-		return value .. ''
-	end
-	
-	slider.tooltipText = Addon.L["Konfiguriere_Spalten"];
-	slider:SetPoint("TOPLEFT", anchor, "BOTTOMLEFT", 0, -15)
-	
-	return slider
 end
 
-function ConfigFrame:CreateButtonWidthSlider(anchor)
-	local slider = Addon.OptionsSlider:New(Addon.L["Itemgrösse"], self, 25, 50, 1)
+function Register()
+	local variable = "numColumns"
+	local name = Addon.L["Spalten"]
+	local tooltip = Addon.L["Konfiguriere_Spalten"]
+	local defaultValue = VendorixConfig.general[variable] or defaultConfig.general[variable]
+	local minValue = 5
+	local maxValue = 20
+	local step = 1
 
-	slider.SetSavedValue = function(self, value)
-		VendorixConfig.general.buttonSize = value
-		self:UpdateValue()
-		UseConfig()
-	end
+	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), defaultValue)
+	local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+	options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right);
+	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
+	Settings.CreateSlider(category, setting, options, tooltip)
 
-	slider.GetSavedValue = function(self)
-		return VendorixConfig.general.buttonSize
-	end
+	local variable = "buttonSize"
+	local name = Addon.L["Itemgrösse"]
+	local tooltip = Addon.L["Konfiguriere_Grössen"]
+	local defaultValue = VendorixConfig.general[variable] or defaultConfig.general[variable]
+	local minValue = 25
+	local maxValue = 50
+	local step = 1
 
-	slider.GetFormattedText = function(self, value)
-		return value .. ''
-	end
-	
-	slider.tooltipText = Addon.L["Konfiguriere_Grössen"]
-	slider:SetPoint("LEFT", anchor, "RIGHT", 30, 0)
-	
-	return slider
+	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), defaultValue)
+	local options = Settings.CreateSliderOptions(minValue, maxValue, step)
+	options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right);
+	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
+	Settings.CreateSlider(category, setting, options, tooltip)
+
+	local variable = "showBoE"
+	local name = Addon.L["ShowBoE"] or "ShowBoE"
+	local tooltip = Addon.L["Konfiguriere_ShowBoE"]
+	local defaultValue = VendorixConfig.general[variable] or defaultConfig.general[variable]
+		
+	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), VendorixConfig.general.showBoE)
+	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
+	Settings.CreateCheckBox(category, setting, tooltip)
+
+	Settings.RegisterAddOnCategory(category)
 end
 
-InterfaceOptions_AddCategory(ConfigFrame)
+SettingsRegistrar:AddRegistrant(Register);
