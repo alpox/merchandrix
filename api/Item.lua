@@ -278,7 +278,7 @@ function ItemSlot:SetEnabled(enabled)
 			EnabledItems[self.id] = enabled;
 		end
 		
-		if enabled then
+		if self:GetEnabled() then
 			self.Button:SetAlpha(1);
 		else
 			self.Button:SetAlpha(0.3);
