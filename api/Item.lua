@@ -191,11 +191,6 @@ function ItemSlot:CreateButton(item, parentFrame)
 			self[event](self, event, ...);
 		end
 	end);
-	
-	button:SetBagID(item.bag)
-	button:SetID(item.slot)
-	button:UpdateExtended()
-	button:UpdateNewItem(item.quality)
 
 	return button
 end
@@ -228,7 +223,11 @@ function ItemSlot:Set(item)
 	self.id = item.id;
 	self._internalItem = item
 	
-	self.Button:SetItemLocation(self._internalItem.location);
+	self.Button:SetItemLocation(item.location);
+	self.Button:SetBagID(item.bag)
+	self.Button:SetID(item.slot)
+	self.Button:UpdateExtended()
+	self.Button:UpdateNewItem(item.quality)
 	self:SetCount(item);
 	self:UpdateState();
 	self:UpdateBoe()
