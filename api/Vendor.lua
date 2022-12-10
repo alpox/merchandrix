@@ -36,7 +36,7 @@ local function SellGreyButtonClick()
 
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
-			local sellStop = VendorixConfig.general.saveSell and counter > 12
+			local sellStop = VendorixConfig.general.safeSell and counter > 12
 			if item.quality == 0 and Addon.CanSellItem(item) and not sellStop then
 				table.insert(itemsToSell, item)
 				counter = counter + 1
@@ -113,7 +113,7 @@ function SellAllButtonClick()
 
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
-			local sellStop = VendorixConfig.general.saveSell and counter > 12
+			local sellStop = VendorixConfig.general.safeSell and counter > 12
 			if Addon.CanSellItem(item) and not sellStop then
 				table.insert(itemsToSell, item)
 				counter = counter + 1

@@ -6,7 +6,7 @@ local defaultConfig = {
 		buttonSize = 36,
 		showBoE = false,
 		showItemLevel = false,
-		saveSell = false
+		safeSell = false
 	}
 }
 
@@ -77,12 +77,12 @@ function Register()
 	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
 	Settings.CreateCheckBox(category, setting, tooltip)
 
-	local variable = "saveSell"
-	local name = Addon.L["SaveSell"] or "SaveSell"
-	local tooltip = Addon.L["Konfiguriere_SaveSell"]
+	local variable = "safeSell"
+	local name = Addon.L["SafeSell"] or "SafeSell"
+	local tooltip = Addon.L["Konfiguriere_SafeSell"]
 	local defaultValue = VendorixConfig.general[variable] or defaultConfig.general[variable]
 		
-	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), VendorixConfig.general.saveSell)
+	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), VendorixConfig.general.safeSell)
 	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
 	Settings.CreateCheckBox(category, setting, tooltip)
 

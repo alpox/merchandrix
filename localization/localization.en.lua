@@ -19,12 +19,12 @@ if GetLocale() ~= "deDE" then
 	Addon.L["Itemgrösse"] = "Itemsize";
 	Addon.L["ShowBoE"] = "Show BoE and BoU";
 	Addon.L["ShowItemLevel"] = "Show item level";
-	Addon.L["SaveSell"] = "Activate safe-sell";
+	Addon.L["SafeSell"] = "Activate safe-sell";
 	Addon.L["Konfiguriere_Spalten"] = "Configurate here the number of columns of your categories.";
 	Addon.L["Konfiguriere_Grössen"] = "Configurate here the size of the item-buttons.";
 	Addon.L["Konfiguriere_ShowBoE"] = "Configurate here if you want to see the label 'BoE' for bind on equip or 'BoU' for bind on use.";
 	Addon.L["Konfiguriere_ShowItemLevel"] = "Configurate here if you want to see the item levels.";
-	Addon.L["Konfiguriere_SaveSell"] = "Configurate here if save-sell should be activated. If activated, no more than 12 items will be sold at a time.";
+	Addon.L["Konfiguriere_SafeSell"] = "Configurate here if safe-sell should be activated. If activated, no more than 12 items will be sold at a time.";
 	
 	Addon.L["Alles_Verkaufen_Bestätigen"] = "Do you really want to sell all active items?";
 end
