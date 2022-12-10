@@ -91,7 +91,6 @@ end
 function ItemSlot:CreateItemLevel()
 	local equipLoc = self._internalItem.equipLoc
 	local quality = self._internalItem.quality
-	print(equipLoc)
 
 	local noequip = not equipLoc
 		or not _G[equipLoc]
