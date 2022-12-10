@@ -9,19 +9,6 @@ Addon.ItemSlot = ItemSlot
 local RIGHT_BUTTON_UP = "RightButtonUp"
 local LEFT_BUTTON_UP = "LeftButtonUp"
 
--- https://github.com/GoldpawsStuff/Bagnon_BoE/blob/master/Bagnon_BoE/main.lua 
--- local colors = {
--- 	[0] = { 157/255, 157/255, 157/255 }, -- Poor
--- 	[1] = { 240/255, 240/255, 240/255 }, -- Common
--- 	[2] = { 30/255, 178/255, 0/255 }, -- Uncommon
--- 	[3] = { 0/255, 112/255, 221/255 }, -- Rare
--- 	[4] = { 163/255, 53/255, 238/255 }, -- Epic
--- 	[5] = { 225/255, 96/255, 0/255 }, -- Legendary
--- 	[6] = { 229/255, 204/255, 127/255 }, -- Artifact
--- 	[7] = { 79/255, 196/255, 225/255 }, -- Heirloom
--- 	[8] = { 79/255, 196/255, 225/255 } -- Blizzard
--- }
-
 function ItemSlot:New(item, part)
 	self = setmetatable({}, ItemSlot)
 	
@@ -29,11 +16,11 @@ function ItemSlot:New(item, part)
 	self.Button = self:CreateButton(item, self.Frame)
 	
 	self.part = part;
+
+	self.BoeFont = self:CreateBoE(item)
+	self.ItemLevelFont = self:CreateItemLevel(item)
 	
 	self:Set(item);
-
-	self:CreateBoE()
-	self:CreateItemLevel()
 	
 	self:UseConfig();
 	
@@ -51,9 +38,32 @@ function ItemSlot:New(item, part)
 end
 
 function ItemSlot:CreateBoE()
+	local boeFont = self.Button:CreateFontString()
+	boeFont:SetDrawLayer("OVERLAY", 2)
+	boeFont:SetPoint("BOTTOMLEFT", 2, 2)
+	boeFont:SetFontObject(NumberFont_Outline_Med or NumberFontNormal)
+	boeFont:SetFont(boeFont:GetFont(), 12, "OUTLINE")
+	boeFont:SetShadowOffset(1, -1)
+	boeFont:SetShadowColor(0, 0, 0, .5)
+	return boeFont
+end
+
+function ItemSlot:CreateItemLevel()
+	local itemLevelFont = self.Button:CreateFontString()
+	itemLevelFont:SetDrawLayer("OVERLAY", 2)
+	itemLevelFont:SetPoint("TOPRIGHT", -2, -3)
+	itemLevelFont:SetFontObject(NumberFont_Outline_Med or NumberFontNormal)
+	itemLevelFont:SetFont(itemLevelFont:GetFont(), 12, "OUTLINE")
+	itemLevelFont:SetShadowOffset(1, -1)
+	itemLevelFont:SetShadowColor(0, 0, 0, .5)
+	return itemLevelFont
+end
+
+function ItemSlot:UpdateBoe()
 	local isBound = self._internalItem.isBound
 
 	if (isBound) then
+		self.BoeFont:Hide()
 		return
 	end
 
@@ -64,16 +74,10 @@ function ItemSlot:CreateBoE()
 	local color = self._internalItem.color
 	
 	if (not bind) then
+		self.BoeFont:Hide()
 		return
 	end
 
-	self.BoeFont = self.Button:CreateFontString()
-	self.BoeFont:SetDrawLayer("OVERLAY", 2)
-	self.BoeFont:SetPoint("BOTTOMLEFT", 2, 2)
-	self.BoeFont:SetFontObject(NumberFont_Outline_Med or NumberFontNormal)
-	self.BoeFont:SetFont(self.BoeFont:GetFont(), 12, "OUTLINE")
-	self.BoeFont:SetShadowOffset(1, -1)
-	self.BoeFont:SetShadowColor(0, 0, 0, .5)
 	self.BoeFont:SetText(message)
 
 	if (color) then
@@ -87,7 +91,7 @@ function ItemSlot:CreateBoE()
 	end	
 end
 
-function ItemSlot:CreateItemLevel()
+function ItemSlot:UpdateItemLevel()
 	local equipLoc = self._internalItem.equipLoc
 	local quality = self._internalItem.quality
 
@@ -102,6 +106,7 @@ function ItemSlot:CreateItemLevel()
 	local show = quality and quality > 0 and not noequip
 	
 	if (not show) then
+		self.ItemLevelFont:Hide()
 		return
 	end
 
@@ -109,15 +114,7 @@ function ItemSlot:CreateItemLevel()
 	local mult = (quality ~= 3 and quality ~= 4) and .7
 	local message = tostring(itemLevel)
 	local color = self._internalItem.color
-	
 
-	self.ItemLevelFont = self.Button:CreateFontString()
-	self.ItemLevelFont:SetDrawLayer("OVERLAY", 2)
-	self.ItemLevelFont:SetPoint("TOPRIGHT", -2, -3)
-	self.ItemLevelFont:SetFontObject(NumberFont_Outline_Med or NumberFontNormal)
-	self.ItemLevelFont:SetFont(self.ItemLevelFont:GetFont(), 12, "OUTLINE")
-	self.ItemLevelFont:SetShadowOffset(1, -1)
-	self.ItemLevelFont:SetShadowColor(0, 0, 0, .5)
 	self.ItemLevelFont:SetText(message)
 
 	if (color) then
@@ -202,10 +199,13 @@ end
 function ItemSlot:Set(item)
 	self.id = item.id;
 	self._internalItem = item
-
+	
 	self.Button:SetItemLocation(self._internalItem.location);
 	self:SetCount(item);
 	self:UpdateState();
+	self:UpdateBoe()
+	self:UpdateItemLevel()
+	self:UseConfig()
 end
 
 function ItemSlot:SetCount(item)
