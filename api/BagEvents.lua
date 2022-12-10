@@ -98,8 +98,12 @@ function GetItemObject(itemId, bag, slot, containerInfo)
 	local location = ItemLocation:CreateFromBagAndSlot(bag, slot)
 	local quality = C_Item.GetItemQuality(location)
 	local itemLevel = C_Item.GetCurrentItemLevel(location)
-	local r, g, b = GetItemQualityColor(quality)
 	local itemLink = C_Item.GetItemLink(location)
+	local r, g, b = 0, 0, 0
+
+	if (quality ~= nil) then
+		r, g, b = GetItemQualityColor(quality)
+	end
 	
 	return {
 		id = id,
