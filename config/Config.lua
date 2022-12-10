@@ -5,7 +5,8 @@ local defaultConfig = {
 		numColumns = 10,
 		buttonSize = 36,
 		showBoE = false,
-		showItemLevel = false
+		showItemLevel = false,
+		saveSell = false
 	}
 }
 
@@ -73,6 +74,15 @@ function Register()
 	local defaultValue = VendorixConfig.general[variable] or defaultConfig.general[variable]
 		
 	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), VendorixConfig.general.showItemLevel)
+	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
+	Settings.CreateCheckBox(category, setting, tooltip)
+
+	local variable = "saveSell"
+	local name = Addon.L["SaveSell"] or "SaveSell"
+	local tooltip = Addon.L["Konfiguriere_SaveSell"]
+	local defaultValue = VendorixConfig.general[variable] or defaultConfig.general[variable]
+		
+	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), VendorixConfig.general.saveSell)
 	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
 	Settings.CreateCheckBox(category, setting, tooltip)
 

@@ -61,8 +61,7 @@ function ItemSlot:CreateBoE()
 	local mult = (quality ~= 3 and quality ~= 4) and .7
 	local bind = self._internalItem.bindType == LE_ITEM_BIND_ON_EQUIP or self._internalItem.bindType == LE_ITEM_BIND_ON_USE
 	local message = bind == LE_ITEM_BIND_ON_USE and "BoU" or "BoE"
-	local r, g, b = GetItemQualityColor(quality)
-	local color = { r, g, b }
+	local color = self._internalItem.color
 	
 	if (not bind) then
 		return
@@ -109,8 +108,7 @@ function ItemSlot:CreateItemLevel()
 	local itemLevel = self._internalItem.level
 	local mult = (quality ~= 3 and quality ~= 4) and .7
 	local message = tostring(itemLevel)
-	local r, g, b = GetItemQualityColor(quality)
-	local color = { r, g, b }
+	local color = self._internalItem.color
 	
 
 	self.ItemLevelFont = self.Button:CreateFontString()
@@ -205,7 +203,7 @@ function ItemSlot:Set(item)
 	self.id = item.id;
 	self._internalItem = item
 
-	self.Button:SetItem(self._internalItem.itemId);
+	self.Button:SetItemLocation(self._internalItem.location);
 	self:SetCount(item);
 	self:UpdateState();
 end
@@ -215,6 +213,12 @@ function ItemSlot:SetCount(item)
 end
 
 function ItemSlot:SellButtonClick(button)
+	local shift_key = IsShiftKeyDown()
+	if shift_key and button == "LeftButton" then
+		 ChatEdit_InsertLink(self._internalItem.link)
+		return
+	end
+	
 	if not self.part:GetEnabled() then return end
 	if button == "RightButton" and self:GetEnabled() then
 		Addon.SellItem(self._internalItem);

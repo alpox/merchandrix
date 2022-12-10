@@ -32,11 +32,14 @@ end
 
 local function SellGreyButtonClick()
 	local itemsToSell = {}
+	local counter = 0
 
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
-			if item.quality == 0 and Addon.CanSellItem(item) then
+			local sellStop = VendorixConfig.general.saveSell and counter > 12
+			if item.quality == 0 and Addon.CanSellItem(item) and not sellStop then
 				table.insert(itemsToSell, item)
+				counter = counter + 1
 			end
 		end
 	end
@@ -89,13 +92,31 @@ function vendor:GetGreyButtonTooltipText()
 	return Addon.L["Verkauft_Grau"] .. "\n" .. Addon.L["Ertrag"] .. ": " .. GetCoinTextureString(amount);
 end
 
-local function SellAllButtonClick()
+
+--[[ confirm dialog ]]
+StaticPopupDialogs["VENDORIX_CONFIRM_SELL_ALL"] = {
+  text = Addon.L["Alles_Verkaufen_Bestätigen"],
+  button1 = OKAY,
+  button2 = CANCEL,
+  OnAccept = function()
+      SellAllButtonClick()
+  end,
+  timeout = 0,
+  whileDead = true,
+  hideOnEscape = true,
+  preferredIndex = 3,
+}
+
+function SellAllButtonClick()
 	local itemsToSell = {}
+	local counter = 0;
 
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
-			if Addon.CanSellItem(item) then
+			local sellStop = VendorixConfig.general.saveSell and counter > 12
+			if Addon.CanSellItem(item) and not sellStop then
 				table.insert(itemsToSell, item)
+				counter = counter + 1
 			end
 		end
 	end
@@ -106,7 +127,9 @@ end
 function vendor:CreateSellAllButton()
 	local b = CreateFrame('Button', self:GetName() .. 'AllButton', self);
 	local s = self;
-	b:SetScript('OnClick', SellAllButtonClick);
+	b:SetScript('OnClick', function() 
+		StaticPopup_Show("VENDORIX_CONFIRM_SELL_ALL")
+	end);
 	b:SetScript('OnEnter', function()
 		GameTooltip:SetOwner(b, "ANCHOR_RIGHT");
 		GameTooltip:SetText(s:GetSellAllButtonTooltipText());

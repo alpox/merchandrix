@@ -93,10 +93,13 @@ end
 f:Load();
 
 function GetItemObject(itemId, bag, slot, containerInfo)
-	local itemLink, quality, _, _, itemType, _, stackCount, equipLoc, _, price, classId, subClassId, bindType = select(2, GetItemInfo(itemId))
+	local _, _, _, _, itemType, _, stackCount, equipLoc, _, price, classId, subClassId, bindType = select(2, GetItemInfo(itemId))
 	local id = C_Item.GetItemGUID(ItemLocation:CreateFromBagAndSlot(bag, slot))
 	local location = ItemLocation:CreateFromBagAndSlot(bag, slot)
+	local quality = C_Item.GetItemQuality(location)
 	local itemLevel = C_Item.GetCurrentItemLevel(location)
+	local r, g, b = GetItemQualityColor(quality)
+	local itemLink = C_Item.GetItemLink(location)
 	
 	return {
 		id = id,
@@ -116,6 +119,7 @@ function GetItemObject(itemId, bag, slot, containerInfo)
 		bindType = bindType,
 		isBound = containerInfo.isBound,
 		location = location,
+		color = { r, g, b },
 	}
 end
 
