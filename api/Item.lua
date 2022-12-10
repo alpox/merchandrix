@@ -181,8 +181,8 @@ function ItemSlot:CreateButton(item, parentFrame)
 	
 	button:RegisterForClicks(LEFT_BUTTON_UP, RIGHT_BUTTON_UP);
 	
-	-- button:HookScript('OnClick', function(_, btn) self:SellButtonClick(btn) end);
-	-- button:HookScript('OnEnter', function(...) self:SellButtonEnter() end);
+	-- button:SetScript("PreClick", function(_, btn) self:OnClick(btn) end);
+	button:SetScript("OnClick", function(_, btn) self:OnClick(btn) end);
 	-- button:HookScript('OnLeave', function(...) self:SellButtonLeave() end);
 	button:SetPoint("TOPLEFT", parentFrame,  0, 0);
 	
@@ -200,6 +200,30 @@ function ItemSlot:CreateButton(item, parentFrame)
 	return button
 end
 
+function ItemSlot:OnClick(button)
+	local modifiedClick = IsModifiedClick();
+
+	-- If we can loot the item and autoloot toggle is active, then do a normal click
+	if ( button ~= "LeftButton" and modifiedClick and IsModifiedClick("AUTOLOOTTOGGLE") ) then
+		local info = C_Container.GetContainerItemInfo(self.Button:GetBagID(), self.Button:GetID());
+		local lootable = info and info.hasLoot;
+		if ( lootable ) then
+			modifiedClick = false;
+		end
+	end
+
+	if button == "LeftButton" and not modifiedClick then
+		self:SetEnabled(not self:GetEnabled());
+		return
+	else
+		if ( modifiedClick ) then
+			self.Button:OnModifiedClick(button);
+		else
+			ContainerFrameItemButton_OnClick(self.Button, button);
+		end
+	end
+end
+
 function ItemSlot:Set(item)
 	self.id = item.id;
 	self._internalItem = item
@@ -215,6 +239,35 @@ end
 function ItemSlot:SetCount(item)
 	self.Button:SetItemButtonCount(item.count)
 end
+-- 
+-- function ItemSlot:AnchorTooltip()
+-- 	if self.Button:GetRight() >= (GetScreenWidth() / 2) then
+-- 		GameTooltip:SetOwner(self.Button, 'ANCHOR_LEFT')
+-- 	else
+-- 		GameTooltip:SetOwner(self.Button, 'ANCHOR_RIGHT')
+-- 	end
+-- end
+	
+-- function ItemSlot:SellButtonEnter()
+-- 	ResetCursor();
+-- 	if self:GetEnabled() then
+-- 		SetCursor("BUY_CURSOR");
+-- 	end
+-- 	self:AnchorTooltip();
+-- 	GameTooltip:ClearLines();
+-- 	local item = self._internalItem
+-- 	if item.bag and item.slot then 
+-- 		GameTooltip:SetBagItem(item.bag, item.slot)
+-- 	else
+-- 		GameTooltip:SetHyperlink(item.link)
+-- 	end
+-- 	GameTooltip:Show();
+-- end
+-- 	
+-- function ItemSlot:SellButtonLeave()
+-- 	GameTooltip:Hide();
+-- 	ResetCursor();
+-- end
 	
 function ItemSlot:UpdateState()
 	self:SetEnabled(self:GetEnabled());

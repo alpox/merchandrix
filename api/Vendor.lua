@@ -199,8 +199,9 @@ function vendor:GetSellAllButtonTooltipText()
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
 			if Addon.CanSellItem(item) then
-				local sellPrice = select(11, GetItemInfo(item.itemId))
-				amount = amount + sellPrice * item.count
+				local purchaseInfo = C_Container.GetContainerItemPurchaseInfo(item.bag, item.slot, false)
+				local sellPrice = purchaseInfo and purchaseInfo.money or select(11, GetItemInfo(item.itemId)) or 0
+				amount = amount + sellPrice
 			end
 		end
 	end
