@@ -10,17 +10,17 @@ local RIGHT_BUTTON_UP = "RightButtonUp"
 local LEFT_BUTTON_UP = "LeftButtonUp"
 
 -- https://github.com/GoldpawsStuff/Bagnon_BoE/blob/master/Bagnon_BoE/main.lua 
-local colors = {
-	[0] = { 157/255, 157/255, 157/255 }, -- Poor
-	[1] = { 240/255, 240/255, 240/255 }, -- Common
-	[2] = { 30/255, 178/255, 0/255 }, -- Uncommon
-	[3] = { 0/255, 112/255, 221/255 }, -- Rare
-	[4] = { 163/255, 53/255, 238/255 }, -- Epic
-	[5] = { 225/255, 96/255, 0/255 }, -- Legendary
-	[6] = { 229/255, 204/255, 127/255 }, -- Artifact
-	[7] = { 79/255, 196/255, 225/255 }, -- Heirloom
-	[8] = { 79/255, 196/255, 225/255 } -- Blizzard
-}
+-- local colors = {
+-- 	[0] = { 157/255, 157/255, 157/255 }, -- Poor
+-- 	[1] = { 240/255, 240/255, 240/255 }, -- Common
+-- 	[2] = { 30/255, 178/255, 0/255 }, -- Uncommon
+-- 	[3] = { 0/255, 112/255, 221/255 }, -- Rare
+-- 	[4] = { 163/255, 53/255, 238/255 }, -- Epic
+-- 	[5] = { 225/255, 96/255, 0/255 }, -- Legendary
+-- 	[6] = { 229/255, 204/255, 127/255 }, -- Artifact
+-- 	[7] = { 79/255, 196/255, 225/255 }, -- Heirloom
+-- 	[8] = { 79/255, 196/255, 225/255 } -- Blizzard
+-- }
 
 function ItemSlot:New(item, part)
 	self = setmetatable({}, ItemSlot)
@@ -33,6 +33,7 @@ function ItemSlot:New(item, part)
 	self:Set(item);
 
 	self:CreateBoE()
+	self:CreateItemLevel()
 	
 	self:UseConfig();
 	
@@ -57,10 +58,11 @@ function ItemSlot:CreateBoE()
 	end
 
 	local quality = self._internalItem.quality
-	local color = quality and colors[quality]
 	local mult = (quality ~= 3 and quality ~= 4) and .7
 	local bind = self._internalItem.bindType == LE_ITEM_BIND_ON_EQUIP or self._internalItem.bindType == LE_ITEM_BIND_ON_USE
 	local message = bind == LE_ITEM_BIND_ON_USE and "BoU" or "BoE"
+	local r, g, b = GetItemQualityColor(quality)
+	local color = { r, g, b }
 	
 	if (not bind) then
 		return
@@ -86,6 +88,53 @@ function ItemSlot:CreateBoE()
 	end	
 end
 
+function ItemSlot:CreateItemLevel()
+	local equipLoc = self._internalItem.equipLoc
+	local quality = self._internalItem.quality
+	print(equipLoc)
+
+	local noequip = not equipLoc
+		or not _G[equipLoc]
+		or equipLoc == "INVTYPE_NON_EQUIP"
+		or equipLoc == "INVTYPE_TABARD"
+		or equipLoc == "INVTYPE_AMMO"
+		or equipLoc == "INVTYPE_QUIVER"
+		or equipLoc == "INVTYPE_BODY"
+
+	local show = quality and quality > 0 and not noequip
+	
+	if (not show) then
+		return
+	end
+
+	-- local itemLevel = C_Item.GetCurrentItemLevel(self._internalItem.location)
+	itemLevel = C_Item.GetCurrentItemLevel(self._internalItem.location)
+	local mult = (quality ~= 3 and quality ~= 4) and .7
+	local message = tostring(itemLevel)
+	local r, g, b = GetItemQualityColor(quality)
+	local color = { r, g, b }
+	
+
+	self.ItemLevelFont = self.Button:CreateFontString()
+	self.ItemLevelFont:SetDrawLayer("OVERLAY", 2)
+	self.ItemLevelFont:SetPoint("TOPRIGHT", -2, -3)
+	self.ItemLevelFont:SetFontObject(NumberFont_Outline_Med or NumberFontNormal)
+	self.ItemLevelFont:SetFont(self.ItemLevelFont:GetFont(), 12, "OUTLINE")
+	self.ItemLevelFont:SetShadowOffset(1, -1)
+	self.ItemLevelFont:SetShadowColor(0, 0, 0, .5)
+	self.ItemLevelFont:SetText(message)
+
+	if (color) then
+		if (mult) then
+			self.ItemLevelFont:SetTextColor(color[1] * mult, color[2] * mult, color[3] * mult)
+		else
+			self.ItemLevelFont:SetTextColor(color[1], color[2], color[3])
+		end
+	else
+		self.ItemLevelFont:SetTextColor(.94, .94, .94)
+	end	
+end
+
 function ItemSlot:UseConfig()
 	local size = VendorixConfig.general.buttonSize
 	
@@ -99,6 +148,14 @@ function ItemSlot:UseConfig()
 			self.BoeFont:Show()
 		else
 			self.BoeFont:Hide()
+		end
+	end
+
+	if (self.ItemLevelFont ~= nil) then
+		if (VendorixConfig.general.showItemLevel) then
+			self.ItemLevelFont:Show()
+		else
+			self.ItemLevelFont:Hide()
 		end
 	end
 end

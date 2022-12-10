@@ -17,6 +17,10 @@ if GetLocale() == "deDE" then
 	Addon.L["Konfiguration"] = "Konfiguration";
 	Addon.L["Spalten"] = "Spalten";
 	Addon.L["Itemgrösse"] = "Itemgrösse";
+	Addon.L["ShowBoE"] = "BoE and BoU anzeigen";
+	Addon.L["ShowItemLevel"] = "Item Level anzeigen";
 	Addon.L["Konfiguriere_Spalten"] = "Konfiguriere hier die Anzahl Spalten der Item Kategorien.";
 	Addon.L["Konfiguriere_Grössen"] = "Konfiguriere hier die Grösse der Items.";
+	Addon.L["Konfiguriere_ShowBoE"] = "Konfiguriere hier ob 'BoE' und 'BoU' angezeigt werden soll.";
+	Addon.L["Konfiguriere_ShowItemLevel"] = "Konfiguriere hier ob das Item-Level angezeigt werden soll.";
 end

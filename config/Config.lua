@@ -4,7 +4,8 @@ local defaultConfig = {
 	general = {
 		numColumns = 10,
 		buttonSize = 36,
-		showBoE = false
+		showBoE = false,
+		showItemLevel = false
 	}
 }
 
@@ -63,6 +64,15 @@ function Register()
 	local defaultValue = VendorixConfig.general[variable] or defaultConfig.general[variable]
 		
 	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), VendorixConfig.general.showBoE)
+	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
+	Settings.CreateCheckBox(category, setting, tooltip)
+
+	local variable = "showItemLevel"
+	local name = Addon.L["ShowItemLevel"] or "ShowItemLevel"
+	local tooltip = Addon.L["Konfiguriere_ShowItemLevel"]
+	local defaultValue = VendorixConfig.general[variable] or defaultConfig.general[variable]
+		
+	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), VendorixConfig.general.showItemLevel)
 	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
 	Settings.CreateCheckBox(category, setting, tooltip)
 
