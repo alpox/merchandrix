@@ -15,8 +15,7 @@ end
 
 Addon.SellItem = function(item)
 	if Addon.CanSellItem(item) then
-		print('Sell ' .. item.link)
-		UseContainerItem(item.bag, item.slot, 0);
+		C_Container.UseContainerItem(item.bag, item.slot);
 	end
 end
 
