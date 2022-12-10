@@ -93,13 +93,17 @@ end
 f:Load();
 
 function GetItemObject(itemId, bag, slot, containerInfo)
-	local _, _, _, _, itemType, _, stackCount, equipLoc, _, price, classId, subClassId, bindType = select(2, GetItemInfo(itemId))
+	local _, baseQuality, _, _, itemType, _, stackCount, equipLoc, _, price, classId, subClassId, bindType = select(2, GetItemInfo(itemId))
 	local id = C_Item.GetItemGUID(ItemLocation:CreateFromBagAndSlot(bag, slot))
 	local location = ItemLocation:CreateFromBagAndSlot(bag, slot)
 	local quality = C_Item.GetItemQuality(location)
 	local itemLevel = C_Item.GetCurrentItemLevel(location)
 	local itemLink = C_Item.GetItemLink(location)
 	local r, g, b = 0, 0, 0
+	
+	if (quality == nil and baseQuality ~= nil) then
+		quality = baseQuality
+	end
 
 	if (quality ~= nil) then
 		r, g, b = GetItemQualityColor(quality)
