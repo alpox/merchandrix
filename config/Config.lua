@@ -6,7 +6,8 @@ local defaultConfig = {
 		buttonSize = 36,
 		showBoE = false,
 		showItemLevel = false,
-		safeSell = false
+		safeSell = false,
+		showInAuctionHouse = false
 	}
 }
 
@@ -83,6 +84,15 @@ function Register()
 	local defaultValue = VendorixConfig.general[variable] or defaultConfig.general[variable]
 		
 	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), VendorixConfig.general.safeSell)
+	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
+	Settings.CreateCheckBox(category, setting, tooltip)
+
+	local variable = "showInAuctionHouse"
+	local name = Addon.L["ShowInAuctionHouse"] or "ShowInAuctionHouse"
+	local tooltip = Addon.L["Konfiguriere_ShowInAuctionHouse"]
+	local defaultValue = VendorixConfig.general[variable] or defaultConfig.general[variable]
+		
+	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), VendorixConfig.general.showInAuctionHouse)
 	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
 	Settings.CreateCheckBox(category, setting, tooltip)
 

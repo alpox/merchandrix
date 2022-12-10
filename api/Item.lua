@@ -177,14 +177,13 @@ function ItemSlot:Remove()
 end
 
 function ItemSlot:CreateButton(item, parentFrame)
-	local button = CreateFrame('ItemButton', parentFrame:GetName() .. 'Button' .. 'Item' .. item.id, parentFrame);
+	local button = CreateFrame('ItemButton', parentFrame:GetName() .. 'Button' .. 'Item' .. item.id, parentFrame, 'ContainerFrameItemButtonTemplate');
 	
 	button:RegisterForClicks(LEFT_BUTTON_UP, RIGHT_BUTTON_UP);
 	
-	button:HookScript('OnClick', function(_, btn) self:SellButtonClick(btn) end);
-	button:HookScript('OnEnter', function(...) self:SellButtonEnter() end);
-	button:HookScript('OnLeave', function(...) self:SellButtonLeave() end);
-
+	-- button:HookScript('OnClick', function(_, btn) self:SellButtonClick(btn) end);
+	-- button:HookScript('OnEnter', function(...) self:SellButtonEnter() end);
+	-- button:HookScript('OnLeave', function(...) self:SellButtonLeave() end);
 	button:SetPoint("TOPLEFT", parentFrame,  0, 0);
 	
 	button:SetScript('OnEvent', function(f, event, ...)
@@ -192,6 +191,11 @@ function ItemSlot:CreateButton(item, parentFrame)
 			self[event](self, event, ...);
 		end
 	end);
+	
+	button:SetBagID(item.bag)
+	button:SetID(item.slot)
+	button:UpdateExtended()
+	button:UpdateNewItem(item.quality)
 
 	return button
 end
@@ -210,51 +214,6 @@ end
 
 function ItemSlot:SetCount(item)
 	self.Button:SetItemButtonCount(item.count)
-end
-
-function ItemSlot:SellButtonClick(button)
-	local shift_key = IsShiftKeyDown()
-	if shift_key and button == "LeftButton" then
-		 ChatEdit_InsertLink(self._internalItem.link)
-		return
-	end
-	
-	if not self.part:GetEnabled() then return end
-	if button == "RightButton" and self:GetEnabled() then
-		Addon.SellItem(self._internalItem);
-	elseif button == "LeftButton" then
-		self:SetEnabled(not self:GetEnabled());
-		self:SellButtonEnter();
-	end
-end
-
-function ItemSlot:AnchorTooltip()
-	if self.Button:GetRight() >= (GetScreenWidth() / 2) then
-		GameTooltip:SetOwner(self.Button, 'ANCHOR_LEFT')
-	else
-		GameTooltip:SetOwner(self.Button, 'ANCHOR_RIGHT')
-	end
-end
-	
-function ItemSlot:SellButtonEnter()
-	ResetCursor();
-	if self:GetEnabled() then
-		SetCursor("BUY_CURSOR");
-	end
-	self:AnchorTooltip();
-	GameTooltip:ClearLines();
-	local item = self._internalItem
-	if item.bag and item.slot then 
-		GameTooltip:SetBagItem(item.bag, item.slot)
-	else
-		GameTooltip:SetHyperlink(item.link)
-	end
-	GameTooltip:Show();
-end
-	
-function ItemSlot:SellButtonLeave()
-	GameTooltip:Hide();
-	ResetCursor();
 end
 	
 function ItemSlot:UpdateState()

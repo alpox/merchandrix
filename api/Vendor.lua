@@ -17,6 +17,39 @@ function vendor:Initialize()
 	
 	vendor:PlaceSellGreyButton();
 	vendor:PlaceSellAllButton();
+
+	vendor:RegisterEvent("MERCHANT_SHOW");
+	vendor:RegisterEvent("AUCTION_HOUSE_SHOW");
+	
+	vendor.OnEvent = function(f, event, ...)
+		if self[event] then
+			self[event](self, event, ...)
+		end		
+	end
+
+	vendor:SetScript('OnEvent', self.OnEvent)
+end
+
+function vendor:MERCHANT_SHOW(event, ...)
+	vendor:ClearAllPoints();
+	vendor:SetPoint("TOPLEFT", MerchantFrame, "TOPRIGHT", 15, 0);
+	vendor:SetParent(MerchantFrame)
+	vendor.SellGreyButton:Show()
+	vendor.SellAllButton:Show()
+	vendor:UpdateSize()
+end
+
+function vendor:AUCTION_HOUSE_SHOW(event, ...)
+	if not VendorixConfig.general.showInAuctionHouse then
+		return
+	end
+
+	vendor:ClearAllPoints();
+	vendor:SetPoint("TOPLEFT", AuctionHouseFrame, "TOPRIGHT", 15, 0);
+	vendor:SetParent(AuctionHouseFrame)
+	vendor.SellGreyButton:Hide()
+	vendor.SellAllButton:Hide()
+	vendor:UpdateSize()
 end
 
 function vendor:UpdateSize()
@@ -24,7 +57,11 @@ function vendor:UpdateSize()
 	if width < 100 then
 		width = 100
 	end
-	height = height + 60;
+	if vendor:GetParent() == MerchantFrame then
+		height = height + 60;
+	else
+		height = height + 20;
+	end
 	vendor:SetSize(width, height);
 end
 
