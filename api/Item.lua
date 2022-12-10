@@ -106,8 +106,7 @@ function ItemSlot:CreateItemLevel()
 		return
 	end
 
-	-- local itemLevel = C_Item.GetCurrentItemLevel(self._internalItem.location)
-	itemLevel = C_Item.GetCurrentItemLevel(self._internalItem.location)
+	local itemLevel = self._internalItem.level
 	local mult = (quality ~= 3 and quality ~= 4) and .7
 	local message = tostring(itemLevel)
 	local r, g, b = GetItemQualityColor(quality)
