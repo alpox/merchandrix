@@ -7,14 +7,14 @@ EnabledParts = EnabledParts or {}
 
 --[[ core functions ]]--
 
-Addon.CanSellItem = function(item)
+Addon.IsActive = function(item)
 	local partEnabled = EnabledParts[item.classId] == nil or EnabledParts[item.classId]
 	local itemEnabled = EnabledItems[item.id] == nil or EnabledItems[item.id]
 	return partEnabled and itemEnabled
 end
 
 Addon.SellItem = function(item)
-	if Addon.CanSellItem(item) then
+	if Addon.IsActive(item) then
 		C_Container.UseContainerItem(item.bag, item.slot);
 	end
 end

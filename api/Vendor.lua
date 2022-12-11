@@ -74,7 +74,7 @@ local function SellGreyButtonClick()
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
 			local sellStop = VendorixConfig.general.safeSell and counter > 12
-			if item.quality == 0 and Addon.CanSellItem(item) and not sellStop then
+			if item.quality == 0 and Addon.IsActive(item) and not sellStop then
 				table.insert(itemsToSell, item)
 				counter = counter + 1
 			end
@@ -119,7 +119,7 @@ function vendor:GetGreyButtonTooltipText()
 	local amount = 0;
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
-			if item.quality == 0 and Addon.CanSellItem(item) then
+			if item.quality == 0 and Addon.IsActive(item) then
 				local sellPrice = select(11, GetItemInfo(item.itemId))
 				amount = amount + sellPrice * item.count
 			end
@@ -151,7 +151,7 @@ function SellAllButtonClick()
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
 			local sellStop = VendorixConfig.general.safeSell and counter > 12
-			if Addon.CanSellItem(item) and not sellStop then
+			if Addon.IsActive(item) and not sellStop then
 				table.insert(itemsToSell, item)
 				counter = counter + 1
 			end
@@ -198,15 +198,15 @@ function vendor:GetSellAllButtonTooltipText()
 	local amount = 0;
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
-			if Addon.CanSellItem(item) then
+			if Addon.IsActive(item) then
 				local purchaseInfo = C_Container.GetContainerItemPurchaseInfo(item.bag, item.slot, false)
 				local sellPrice = purchaseInfo and purchaseInfo.money or select(11, GetItemInfo(item.itemId)) or 0
-				amount = amount + sellPrice
+				amount = amount + sellPrice * item.stackCount
 			end
 		end
 	end
 	
-	return Addon.L["Verkauft_Freigegeben"] .. "\n" .. Addon.L["Ertrag"] .. ": " .. GetCoinTextureString(amount);
+	return Addon.L["Verkauft_Freigegeben"] .. "\n" .. Addon.L["Ertrag"] .. ": " .. GetMoneyString(amount);
 end
 
 vendor:Initialize();

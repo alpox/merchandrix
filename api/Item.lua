@@ -214,7 +214,7 @@ function ItemSlot:OnClick(button)
 	else
 		if ( modifiedClick ) then
 			self.Button:OnModifiedClick(button);
-		else
+		elseif self:GetEnabled() then
 			ContainerFrameItemButton_OnClick(self.Button, button);
 		end
 	end
