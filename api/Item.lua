@@ -59,10 +59,13 @@ function ItemSlot:CreateItemLevel()
 	return itemLevelFont
 end
 
-function ItemSlot:UpdateBoe()
-	local isBound = self._internalItem.isBound
+function ItemSlot:ShouldShowBoE()
+	return not self._internalItem.isBound
+		and self._internalItem.bindType == LE_ITEM_BIND_ON_EQUIP or self._internalItem.bindType == LE_ITEM_BIND_ON_USE
+end
 
-	if (isBound) then
+function ItemSlot:UpdateBoe()
+	if not self:ShouldShowBoE() then
 		self.BoeFont:Hide()
 		return
 	end
@@ -72,11 +75,6 @@ function ItemSlot:UpdateBoe()
 	local bind = self._internalItem.bindType == LE_ITEM_BIND_ON_EQUIP or self._internalItem.bindType == LE_ITEM_BIND_ON_USE
 	local message = bind == LE_ITEM_BIND_ON_USE and "BoU" or "BoE"
 	local color = self._internalItem.color
-	
-	if (not bind) then
-		self.BoeFont:Hide()
-		return
-	end
 
 	self.BoeFont:SetText(message)
 
@@ -91,7 +89,7 @@ function ItemSlot:UpdateBoe()
 	end	
 end
 
-function ItemSlot:UpdateItemLevel()
+function ItemSlot:ShouldShowItemLevel()
 	local equipLoc = self._internalItem.equipLoc
 	local quality = self._internalItem.quality
 
@@ -103,13 +101,16 @@ function ItemSlot:UpdateItemLevel()
 		or equipLoc == "INVTYPE_QUIVER"
 		or equipLoc == "INVTYPE_BODY"
 
-	local show = quality and quality > 0 and not noequip
-	
-	if (not show) then
+	return quality and quality > 0 and not noequip
+end
+
+function ItemSlot:UpdateItemLevel()
+	if not self:ShouldShowItemLevel() then
 		self.ItemLevelFont:Hide()
 		return
 	end
 
+	local quality = self._internalItem.quality
 	local itemLevel = self._internalItem.level
 	local mult = (quality ~= 3 and quality ~= 4) and .7
 	local message = tostring(itemLevel)
@@ -137,7 +138,7 @@ function ItemSlot:UseConfig()
 	Addon:StyleButton(self.Button, nil, size)
 
 	if (self.BoeFont ~= nil) then
-		if (VendorixConfig.general.showBoE) then
+		if VendorixConfig.general.showBoE and self:ShouldShowBoE() then
 			self.BoeFont:Show()
 		else
 			self.BoeFont:Hide()
@@ -145,7 +146,7 @@ function ItemSlot:UseConfig()
 	end
 
 	if (self.ItemLevelFont ~= nil) then
-		if (VendorixConfig.general.showItemLevel) then
+		if VendorixConfig.general.showItemLevel and self:ShouldShowItemLevel() then
 			self.ItemLevelFont:Show()
 		else
 			self.ItemLevelFont:Hide()
