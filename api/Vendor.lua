@@ -199,9 +199,24 @@ function vendor:GetSellAllButtonTooltipText()
 	for _, part in pairs(ItemParts) do
 		for _, item in pairs(part.items) do
 			if Addon.IsActive(item) then
-				local purchaseInfo = C_Container.GetContainerItemPurchaseInfo(item.bag, item.slot, false)
-				local sellPrice = purchaseInfo and purchaseInfo.money or select(11, GetItemInfo(item.itemId)) or 0
-				amount = amount + sellPrice * item.stackCount
+				local tooltipPrice = 0
+
+				-- Try to find the price in the tooltip
+				-- No other way was found to find the accurate price
+				-- taking item-scaling into account
+				local tooltipInfo = C_TooltipInfo.GetBagItem(item.bag, item.slot)
+				for _, item in pairs(tooltipInfo.lines) do
+					for _, arg in pairs(item.args) do
+						if arg.field == "price" then
+							tooltipPrice = arg.intVal
+						end
+					end
+				end
+
+				-- Otherwise use the normal item price
+				local sellPrice = select(11, GetItemInfo(item.itemId)) or 0
+
+				amount = amount + (tooltipPrice or (sellPrice * item.count))
 			end
 		end
 	end
