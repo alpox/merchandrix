@@ -1,4 +1,4 @@
-## Interface: 100002
+## Interface: 100007
 ## Title: Vendorix
 ## Notes: "Adds better vendor overview"
 ## Version: 1.0
