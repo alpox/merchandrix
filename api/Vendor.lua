@@ -206,10 +206,8 @@ function vendor:GetSellAllButtonTooltipText()
 				-- taking item-scaling into account
 				local tooltipInfo = C_TooltipInfo.GetBagItem(item.bag, item.slot)
 				for _, item in pairs(tooltipInfo.lines) do
-					for _, arg in pairs(item.args) do
-						if arg.field == "price" then
-							tooltipPrice = arg.intVal
-						end
+					if item.type == 11 then -- 11: SellPrice
+						tooltipPrice = item.price
 					end
 				end
 
