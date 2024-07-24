@@ -47,7 +47,8 @@ function orderedPairs(t)
    return orderedNext, t, nil
 end
 
---[[ Utility Functions ]] --
+--[[ Utility Functions ]]
+                          --
 
 function idoublepair(t)
    local function dbit(t, i)
@@ -183,7 +184,7 @@ function itemNameSort(t)
 end
 
 function sortedArmor(t)
-	local ts = qualitySortDesc(levelSortDesc(itemSubTypeSortDesc(itemNameSort(t))));
+   local ts = qualitySortDesc(levelSortDesc(itemSubTypeSortDesc(itemNameSort(t))));
 
    local function s(ts, i)
       i = i + 1;
@@ -200,7 +201,7 @@ function sortedArmor(t)
 end
 
 function sortedOther(t)
-	local ts = itemSubTypeSortDesc(stackCountSortDesc(levelSortDesc(itemNameSort(t))));
+   local ts = itemSubTypeSortDesc(stackCountSortDesc(levelSortDesc(itemNameSort(t))));
 
    local function s(ts, i)
       i = i + 1;
@@ -255,34 +256,33 @@ function map(arg)
    return f;
 end
 
-
 local waitTable = {};
 local waitFrame = nil;
 
 function Vendorix_wait(delay, func, ...)
-  if(type(delay)~="number" or type(func)~="function") then
-    return false;
-  end
-  if(waitFrame == nil) then
-    waitFrame = CreateFrame("Frame","WaitFrame", UIParent);
-    waitFrame:SetScript("onUpdate",function (self,elapse)
-      local count = #waitTable;
-      local i = 1;
-      while(i<=count) do
-        local waitRecord = tremove(waitTable,i);
-        local d = tremove(waitRecord,1);
-        local f = tremove(waitRecord,1);
-        local p = tremove(waitRecord,1);
-        if(d>elapse) then
-          tinsert(waitTable,i,{d-elapse,f,p});
-          i = i + 1;
-        else
-          count = count - 1;
-          f(unpack(p));
-        end
-      end
-    end);
-  end
-  tinsert(waitTable,{delay,func,{...}});
-  return true;
+   if (type(delay) ~= "number" or type(func) ~= "function") then
+      return false;
+   end
+   if (waitFrame == nil) then
+      waitFrame = CreateFrame("Frame", "WaitFrame", UIParent);
+      waitFrame:SetScript("onUpdate", function(self, elapse)
+         local count = #waitTable;
+         local i = 1;
+         while (i <= count) do
+            local waitRecord = tremove(waitTable, i);
+            local d = tremove(waitRecord, 1);
+            local f = tremove(waitRecord, 1);
+            local p = tremove(waitRecord, 1);
+            if (d > elapse) then
+               tinsert(waitTable, i, { d - elapse, f, p });
+               i = i + 1;
+            else
+               count = count - 1;
+               f(unpack(p));
+            end
+         end
+      end);
+   end
+   tinsert(waitTable, { delay, func, { ... } });
+   return true;
 end

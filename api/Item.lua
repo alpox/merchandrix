@@ -12,7 +12,7 @@ function ItemSlot:New(item, part)
 	self = setmetatable({}, ItemSlot)
 
 	self.Frame = CreateFrame("Frame", part.Frame:GetName() .. 'Slot' .. item.id, part.Frame)
-	self.Frame.IsCombinedBagContainer = function ()
+	self.Frame.IsCombinedBagContainer = function()
 		return true
 	end
 	self.Button = self:CreateButton(item, self.Frame)
@@ -230,7 +230,7 @@ function ItemSlot:Set(item)
 	self.Button:Initialize(item.bag, item.slot)
 	self.Button:SetItemLocation(item.location)
 	self.Button:UpdateNewItem(item.quality)
-	
+
 	self:SetCount(item);
 	self:UpdateState();
 	self:UpdateBoe()

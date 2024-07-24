@@ -6,25 +6,29 @@ local vendor = CreateFrame("Frame", ADDON .. "VendorFrame", MerchantFrame, Backd
 Addon.Vendor = vendor;
 
 function vendor:Initialize()
-	vendor:SetBackdrop({bgFile = "Interface/FrameGeneral/UI-Background-Rock", 
-						edgeFile = "Interface/Tooltips/UI-Tooltip-Border", 
-						tile = false, tileSize = 16, edgeSize = 16, 
-						insets = { left = 4, right = 4, top = 4, bottom = 4 }});
+	vendor:SetBackdrop({
+		bgFile = "Interface/FrameGeneral/UI-Background-Rock",
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		tile = false,
+		tileSize = 16,
+		edgeSize = 16,
+		insets = { left = 4, right = 4, top = 4, bottom = 4 }
+	});
 	vendor:ClearAllPoints();
 	vendor:SetPoint("TOPLEFT", MerchantFrame, "TOPRIGHT", 15, 0);
 	vendor:SetSize(MerchantFrame:GetSize());
 	vendor:Show();
-	
+
 	vendor:PlaceSellGreyButton();
 	vendor:PlaceSellAllButton();
 
 	vendor:RegisterEvent("MERCHANT_SHOW");
 	vendor:RegisterEvent("AUCTION_HOUSE_SHOW");
-	
+
 	vendor.OnEvent = function(f, event, ...)
 		if self[event] then
 			self[event](self, event, ...)
-		end		
+		end
 	end
 
 	vendor:SetScript('OnEvent', self.OnEvent)
@@ -65,7 +69,8 @@ function vendor:UpdateSize()
 	vendor:SetSize(width, height);
 end
 
---[[ sell grey button ]]--
+--[[ sell grey button ]]
+                         --
 
 local function SellGreyButtonClick()
 	local itemsToSell = {}
@@ -109,7 +114,7 @@ function vendor:PlaceSellGreyButton()
 	btn:ClearAllPoints();
 	btn:SetPoint("BOTTOMLEFT", 10, 10);
 	btn:SetSize(BUTTON_SIZE, BUTTON_SIZE);
-	
+
 	Addon:StyleButton(btn, [[Interface\Icons\INV_Misc_Coin_04]], 36);
 
 	btn:Show();
@@ -125,23 +130,22 @@ function vendor:GetGreyButtonTooltipText()
 			end
 		end
 	end
-	
+
 	return Addon.L["Verkauft_Grau"] .. "\n" .. Addon.L["Ertrag"] .. ": " .. GetCoinTextureString(amount);
 end
 
-
 --[[ confirm dialog ]]
 StaticPopupDialogs["VENDORIX_CONFIRM_SELL_ALL"] = {
-  text = Addon.L["Alles_Verkaufen_Bestätigen"],
-  button1 = OKAY,
-  button2 = CANCEL,
-  OnAccept = function()
-      SellAllButtonClick()
-  end,
-  timeout = 0,
-  whileDead = true,
-  hideOnEscape = true,
-  preferredIndex = 3,
+	text = Addon.L["Alles_Verkaufen_Bestätigen"],
+	button1 = OKAY,
+	button2 = CANCEL,
+	OnAccept = function()
+		SellAllButtonClick()
+	end,
+	timeout = 0,
+	whileDead = true,
+	hideOnEscape = true,
+	preferredIndex = 3,
 }
 
 function SellAllButtonClick()
@@ -164,7 +168,7 @@ end
 function vendor:CreateSellAllButton()
 	local b = CreateFrame('Button', self:GetName() .. 'AllButton', self);
 	local s = self;
-	b:SetScript('OnClick', function() 
+	b:SetScript('OnClick', function()
 		StaticPopup_Show("VENDORIX_CONFIRM_SELL_ALL")
 	end);
 	b:SetScript('OnEnter', function()
@@ -188,7 +192,7 @@ function vendor:PlaceSellAllButton()
 	btn:ClearAllPoints();
 	btn:SetPoint("LEFT", self:GetSellGreyButton(), "RIGHT", 5, 0);
 	btn:SetSize(BUTTON_SIZE, BUTTON_SIZE);
-	
+
 	Addon:StyleButton(btn, [[Interface\Icons\INV_Misc_Coin_02]]);
 
 	btn:Show();
@@ -218,7 +222,7 @@ function vendor:GetSellAllButtonTooltipText()
 			end
 		end
 	end
-	
+
 	return Addon.L["Verkauft_Freigegeben"] .. "\n" .. Addon.L["Ertrag"] .. ": " .. GetMoneyString(amount);
 end
 

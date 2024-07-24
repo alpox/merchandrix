@@ -1,12 +1,11 @@
-
 local ADDON, Addon = ...;
 
 local f = CreateFrame("Frame");
 
 ItemParts = {}
 
-local EventHandler = { }
-EventHandler.registered = { }
+local EventHandler = {}
+EventHandler.registered = {}
 
 Addon.EventHandler = EventHandler
 
@@ -28,15 +27,15 @@ function f:Load()
 	self:RegisterEvent("MERCHANT_SHOW");
 	self:RegisterEvent("BAG_UPDATE_DELAYED");
 	self:RegisterEvent("EQUIPMENT_SETS_CHANGED");
-	
+
 	self.RegisterEvent = function(self, event)
 		self:RegisterEvent(event)
 	end
-	
+
 	self.OnEvent = function(f, event, ...)
 		if self[event] then
 			self[event](self, event, ...)
-		end		
+		end
 	end
 
 	self:SetScript('OnEvent', self.OnEvent)
@@ -55,30 +54,30 @@ function f:EQUIPMENT_SETS_CHANGED()
 end
 
 function Addon:TooltipInformationAvailable(bag, slot, ...)
-   local hasMap = {};
-   
-   C_TooltipInfo.GameTooltip:ClearLines();
-   C_TooltipInfo.GameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
-   C_TooltipInfo.GameTooltip:SetBagItem(bag, slot);
-   
-   for p, tag in ipairs({...}) do
+	local hasMap = {};
+
+	C_TooltipInfo.GameTooltip:ClearLines();
+	C_TooltipInfo.GameTooltip:SetOwner(WorldFrame, "ANCHOR_NONE");
+	C_TooltipInfo.GameTooltip:SetBagItem(bag, slot);
+
+	for p, tag in ipairs({ ... }) do
 		hasMap[p] = false
-   end
-   
-   for _, region in ipairs({C_TooltipInfo.GameTooltip:GetRegions()}) do
-      if region and region:GetObjectType() == "FontString" then
-         local text = region:GetText()
-		 
-		 for p, tag in ipairs({...}) do
-			 if text and strfind(text, tag) then
-				table.insert(hasMap, p, true);
-			 end
-		 end
-      end
-   end
-   
-   C_TooltipInfo.GameTooltip:Hide();
-   return unpack(hasMap);
+	end
+
+	for _, region in ipairs({ C_TooltipInfo.GameTooltip:GetRegions() }) do
+		if region and region:GetObjectType() == "FontString" then
+			local text = region:GetText()
+
+			for p, tag in ipairs({ ... }) do
+				if text and strfind(text, tag) then
+					table.insert(hasMap, p, true);
+				end
+			end
+		end
+	end
+
+	C_TooltipInfo.GameTooltip:Hide();
+	return unpack(hasMap);
 end
 
 function IndexOf(t, v)
@@ -93,14 +92,15 @@ end
 f:Load();
 
 function GetItemObject(itemId, bag, slot, containerInfo)
-	local _, baseQuality, _, _, itemType, _, stackCount, equipLoc, _, price, classId, subClassId, bindType = select(2, GetItemInfo(itemId))
+	local _, baseQuality, _, _, itemType, _, stackCount, equipLoc, _, price, classId, subClassId, bindType = select(2,
+		GetItemInfo(itemId))
 	local id = C_Item.GetItemGUID(ItemLocation:CreateFromBagAndSlot(bag, slot))
 	local location = ItemLocation:CreateFromBagAndSlot(bag, slot)
 	local quality = C_Item.GetItemQuality(location)
 	local itemLevel = C_Item.GetCurrentItemLevel(location)
 	local itemLink = C_Item.GetItemLink(location)
 	local r, g, b = 0, 0, 0
-	
+
 	if (quality == nil and baseQuality ~= nil) then
 		quality = baseQuality
 	end
@@ -108,7 +108,7 @@ function GetItemObject(itemId, bag, slot, containerInfo)
 	if (quality ~= nil) then
 		r, g, b = GetItemQualityColor(quality)
 	end
-	
+
 	return {
 		id = id,
 		itemId = itemId,
@@ -134,19 +134,17 @@ end
 function DetectItems()
 	ItemParts = {}
 
-  for bag = 0, 4 do
-		
-		
-    for slot = 1, C_Container.GetContainerNumSlots(bag) do
-      local itemId = C_Container.GetContainerItemID(bag, slot)
+	for bag = 0, 4 do
+		for slot = 1, C_Container.GetContainerNumSlots(bag) do
+			local itemId = C_Container.GetContainerItemID(bag, slot)
 			if itemId ~= nil then
 				local containerInfo = C_Container.GetContainerItemInfo(bag, slot)
 				local itemObject = GetItemObject(itemId, bag, slot, containerInfo)
-				
+
 				local price = itemObject.price
 				local itemType = itemObject.itemType
 				local classId = itemObject.classId
-				
+
 				if price and price > 0 then
 					local id = C_Item.GetItemGUID(ItemLocation:CreateFromBagAndSlot(bag, slot))
 
@@ -157,7 +155,7 @@ function DetectItems()
 					if ItemParts[classId] ~= nil then
 						itemPart = ItemParts[classId]
 					end
-				
+
 					itemPart.items[id] = itemObject
 
 					if classId ~= nil then
@@ -165,11 +163,10 @@ function DetectItems()
 					end
 				end
 			end
-    end
-  end
+		end
+	end
 
 	EventHandler:FireEvent("ITEMS_CHANGE");
-  
-  return ItemParts
-end
 
+	return ItemParts
+end
