@@ -40,6 +40,8 @@ function Register()
 	local maxValue = 20
 	local step = 1
 
+	Settings.RegisterAddOnCategory(category)
+
 	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), defaultValue)
 	local options = Settings.CreateSliderOptions(minValue, maxValue, step)
 	options:SetLabelFormatter(MinimalSliderWithSteppersMixin.Label.Right);
@@ -95,8 +97,6 @@ function Register()
 	local setting = Settings.RegisterAddOnSetting(category, name, variable, type(defaultValue), VendorixConfig.general.showInAuctionHouse)
 	Settings.SetOnValueChangedCallback(variable, SetValue(variable, setting));
 	Settings.CreateCheckBox(category, setting, tooltip)
-
-	Settings.RegisterAddOnCategory(category)
 end
 
 SettingsRegistrar:AddRegistrant(Register);

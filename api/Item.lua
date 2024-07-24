@@ -1,7 +1,6 @@
-
 local ADDON, Addon = ...;
 
-local ItemSlot = { };
+local ItemSlot = {};
 ItemSlot.__index = ItemSlot
 
 Addon.ItemSlot = ItemSlot
@@ -11,29 +10,32 @@ local LEFT_BUTTON_UP = "LeftButtonUp"
 
 function ItemSlot:New(item, part)
 	self = setmetatable({}, ItemSlot)
-	
+
 	self.Frame = CreateFrame("Frame", part.Frame:GetName() .. 'Slot' .. item.id, part.Frame)
+	self.Frame.IsCombinedBagContainer = function ()
+		return true
+	end
 	self.Button = self:CreateButton(item, self.Frame)
-	
+
 	self.part = part;
 
 	self.BoeFont = self:CreateBoE(item)
 	self.ItemLevelFont = self:CreateItemLevel(item)
-	
+
 	self:Set(item);
-	
+
 	self:UseConfig();
-	
+
 	self:UpdateState();
-	
+
 	self.Frame:RegisterEvent("MODIFIER_STATE_CHANGED")
-	
+
 	self.Frame:SetScript('OnEvent', function(f, event, ...)
 		if self[event] then
 			self[event](self, event, ...);
 		end
 	end);
-	
+
 	return self;
 end
 
@@ -61,7 +63,7 @@ end
 
 function ItemSlot:ShouldShowBoE()
 	return not self._internalItem.isBound
-		and self._internalItem.bindType == LE_ITEM_BIND_ON_EQUIP or self._internalItem.bindType == LE_ITEM_BIND_ON_USE
+			and self._internalItem.bindType == LE_ITEM_BIND_ON_EQUIP or self._internalItem.bindType == LE_ITEM_BIND_ON_USE
 end
 
 function ItemSlot:UpdateBoe()
@@ -86,7 +88,7 @@ function ItemSlot:UpdateBoe()
 		end
 	else
 		self.BoeFont:SetTextColor(.94, .94, .94)
-	end	
+	end
 end
 
 function ItemSlot:ShouldShowItemLevel()
@@ -94,12 +96,12 @@ function ItemSlot:ShouldShowItemLevel()
 	local quality = self._internalItem.quality
 
 	local noequip = not equipLoc
-		or not _G[equipLoc]
-		or equipLoc == "INVTYPE_NON_EQUIP"
-		or equipLoc == "INVTYPE_TABARD"
-		or equipLoc == "INVTYPE_AMMO"
-		or equipLoc == "INVTYPE_QUIVER"
-		or equipLoc == "INVTYPE_BODY"
+			or not _G[equipLoc]
+			or equipLoc == "INVTYPE_NON_EQUIP"
+			or equipLoc == "INVTYPE_TABARD"
+			or equipLoc == "INVTYPE_AMMO"
+			or equipLoc == "INVTYPE_QUIVER"
+			or equipLoc == "INVTYPE_BODY"
 
 	return quality and quality > 0 and not noequip
 end
@@ -126,12 +128,12 @@ function ItemSlot:UpdateItemLevel()
 		end
 	else
 		self.ItemLevelFont:SetTextColor(.94, .94, .94)
-	end	
+	end
 end
 
 function ItemSlot:UseConfig()
 	local size = VendorixConfig.general.buttonSize
-	
+
 	self.Button:SetSize(size, size)
 	self.Button.IconBorder:SetSize(size, size)
 	self.Frame:SetSize(size, size)
@@ -156,7 +158,7 @@ end
 
 function ItemSlot:MODIFIER_STATE_CHANGED(event, button, state)
 	if button ~= "LSHIFT" and button ~= "RSHIFT" then return end
-	
+
 	if state == 1 then
 		GameTooltip_ShowCompareItem()
 	else
@@ -178,15 +180,16 @@ function ItemSlot:Remove()
 end
 
 function ItemSlot:CreateButton(item, parentFrame)
-	local button = CreateFrame('ItemButton', parentFrame:GetName() .. 'Button' .. 'Item' .. item.id, parentFrame, 'ContainerFrameItemButtonTemplate');
-	
+	local button = CreateFrame('ItemButton', parentFrame:GetName() .. 'Button' .. 'Item' .. item.id, parentFrame,
+		'ContainerFrameItemButtonTemplate');
+
 	button:RegisterForClicks(LEFT_BUTTON_UP, RIGHT_BUTTON_UP);
-	
+
 	-- button:SetScript("PreClick", function(_, btn) self:OnClick(btn) end);
 	button:SetScript("OnClick", function(_, btn) self:OnClick(btn) end);
 	-- button:HookScript('OnLeave', function(...) self:SellButtonLeave() end);
-	button:SetPoint("TOPLEFT", parentFrame,  0, 0);
-	
+	button:SetPoint("TOPLEFT", parentFrame, 0, 0);
+
 	button:SetScript('OnEvent', function(f, event, ...)
 		if self[event] then
 			self[event](self, event, ...);
@@ -200,10 +203,10 @@ function ItemSlot:OnClick(button)
 	local modifiedClick = IsModifiedClick();
 
 	-- If we can loot the item and autoloot toggle is active, then do a normal click
-	if ( button ~= "LeftButton" and modifiedClick and IsModifiedClick("AUTOLOOTTOGGLE") ) then
+	if (button ~= "LeftButton" and modifiedClick and IsModifiedClick("AUTOLOOTTOGGLE")) then
 		local info = C_Container.GetContainerItemInfo(self.Button:GetBagID(), self.Button:GetID());
 		local lootable = info and info.hasLoot;
-		if ( lootable ) then
+		if (lootable) then
 			modifiedClick = false;
 		end
 	end
@@ -212,7 +215,7 @@ function ItemSlot:OnClick(button)
 		self:SetEnabled(not self:GetEnabled());
 		return
 	else
-		if ( modifiedClick ) then
+		if (modifiedClick) then
 			self.Button:OnModifiedClick(button);
 		elseif self:GetEnabled() then
 			ContainerFrameItemButton_OnClick(self.Button, button);
@@ -223,12 +226,11 @@ end
 function ItemSlot:Set(item)
 	self.id = item.id;
 	self._internalItem = item
-	
-	self.Button:SetItemLocation(item.location);
-	self.Button:SetBagID(item.bag)
-	self.Button:SetID(item.slot)
-	self.Button:UpdateExtended()
+
+	self.Button:Initialize(item.bag, item.slot)
+	self.Button:SetItemLocation(item.location)
 	self.Button:UpdateNewItem(item.quality)
+	
 	self:SetCount(item);
 	self:UpdateState();
 	self:UpdateBoe()
@@ -239,7 +241,8 @@ end
 function ItemSlot:SetCount(item)
 	self.Button:SetItemButtonCount(item.count)
 end
--- 
+
+--
 -- function ItemSlot:AnchorTooltip()
 -- 	if self.Button:GetRight() >= (GetScreenWidth() / 2) then
 -- 		GameTooltip:SetOwner(self.Button, 'ANCHOR_LEFT')
@@ -247,7 +250,7 @@ end
 -- 		GameTooltip:SetOwner(self.Button, 'ANCHOR_RIGHT')
 -- 	end
 -- end
-	
+
 -- function ItemSlot:SellButtonEnter()
 -- 	ResetCursor();
 -- 	if self:GetEnabled() then
@@ -256,7 +259,7 @@ end
 -- 	self:AnchorTooltip();
 -- 	GameTooltip:ClearLines();
 -- 	local item = self._internalItem
--- 	if item.bag and item.slot then 
+-- 	if item.bag and item.slot then
 -- 		GameTooltip:SetBagItem(item.bag, item.slot)
 -- 	else
 -- 		GameTooltip:SetHyperlink(item.link)
@@ -268,7 +271,7 @@ end
 -- 	GameTooltip:Hide();
 -- 	ResetCursor();
 -- end
-	
+
 function ItemSlot:UpdateState()
 	self:SetEnabled(self:GetEnabled());
 end
@@ -278,7 +281,7 @@ function ItemSlot:SetEnabled(enabled)
 		if self.part:GetEnabled() then
 			EnabledItems[self.id] = enabled;
 		end
-		
+
 		if self:GetEnabled() then
 			self.Button:SetAlpha(1);
 		else

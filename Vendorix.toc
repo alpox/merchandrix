@@ -1,7 +1,7 @@
-## Interface: 100200
+## Interface: 110000
 ## Title: Vendorix
 ## Notes: "Adds better vendor overview"
-## Version: 1.0.2
+## Version: 2.0.2
 ## SavedVariables: VendorixConfig
 ## SavedVariablesPerCharacter: EnabledItems, EnabledParts
 
